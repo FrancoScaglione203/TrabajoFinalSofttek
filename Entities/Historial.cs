@@ -11,15 +11,21 @@ namespace TrabajoFinalSofttek.Entities
         public int Id { get; set; }
 
         [Column("usuario_id")]
-        public int IdUsuario { get; set; }
+        public int UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
 
         [Column("tipoMovimiento_id")]
-        public int IdTipoMovimiento { get; set; }
+        public int TipoMovimientoId { get; set; }
         public TipoMovimiento TipoMovimiento { get; set; }
 
         [Column("moneda_id")]
-        public int IdMoneda { get; set; }
+        public int MonedaId { get; set; }
         public Moneda Moneda { get; set; }
+
+        [Required]
+        [Column("historial_monto")]
+        public long Monto { get; set; }
+
+
     }
 }
