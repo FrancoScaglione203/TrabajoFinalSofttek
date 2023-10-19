@@ -9,7 +9,7 @@ namespace TrabajoFinalSofttek.Entities
         public int Id { get; set; }
 
         [Column("cuentaCripto_UUID")]
-        public int UUID { get; set; }
+        public long UUID { get; set; }
 
         [Column("cuentaCripto_saldo")]
         public decimal Saldo { get; set; }

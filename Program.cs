@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using TrabajoFinalSofttek.DataAccess;
+
 namespace TrabajoFinalSofttek
 {
     public class Program
@@ -13,6 +16,11 @@ namespace TrabajoFinalSofttek
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer("name=defaultConnection");
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,24 +34,6 @@ namespace TrabajoFinalSofttek
 
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateTime.Now.AddDays(index),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
 
             app.Run();
         }
