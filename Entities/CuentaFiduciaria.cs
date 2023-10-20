@@ -1,9 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using TrabajoFinalSofttek.DTOs;
 
 namespace TrabajoFinalSofttek.Entities
 {
     public class CuentaFiduciaria
     {
+        public CuentaFiduciaria(CuentaFiduciariaDto dto)
+        {
+            CBU = dto.CBU;
+            Alias = dto.Alias;
+            NumeroCuenta = dto.NumeroCuenta;
+            SaldoPesos = dto.SaldoPesos;
+            SaldoDolares = dto.SaldoDolares;
+            Activo = true;
+        }
+
+        public CuentaFiduciaria()
+        {
+
+        }
+
         [Column("cuentaFiduciaria_id")]
         public int Id { get; set; }
 

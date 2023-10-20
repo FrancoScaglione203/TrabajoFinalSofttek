@@ -24,7 +24,7 @@ namespace TrabajoFinalSofttek.Entities
 
         [Required]
         [Column("historial_monto")]
-        public long Monto { get; set; }
+        public decimal Monto { get; set; }
 
 
     }
