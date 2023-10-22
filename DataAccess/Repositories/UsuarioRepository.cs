@@ -1,4 +1,6 @@
-﻿using TrabajoFinalSofttek.DataAccess.Repositories.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using TrabajoFinalSofttek.DataAccess.Repositories.Interfaces;
+using TrabajoFinalSofttek.DTOs;
 using TrabajoFinalSofttek.Entities;
 
 
@@ -36,6 +38,11 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
 
 
             return true;
+        }
+
+        public async Task<Usuario?> AuthenticateCredentials(AuthenticateDto dto)
+        {
+            return await _context.Usuarios.SingleOrDefaultAsync(x => x.Cuil == dto.Cuil && x.Clave == dto.Clave);
         }
     }
 }
