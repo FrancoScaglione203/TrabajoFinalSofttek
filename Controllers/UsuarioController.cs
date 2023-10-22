@@ -23,6 +23,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <returns>Retorna lista de clase Usuario</returns>
 
         [HttpGet]
+        [Authorize]
         [Route("Usuarios")]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetAll()
         {
@@ -33,7 +34,11 @@ namespace TrabajoFinalSofttek.Controllers
 
 
 
-
+        /// <summary>
+        /// Agrega un Usuario junto con una CuentaCripto y una CuentaFiduciaria a la DB
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Agregar")]
         public async Task<IActionResult> Agregar(UsuarioDto dto)
