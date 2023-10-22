@@ -23,5 +23,18 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         {
             return await _context.Set<T>().ToListAsync();
         }
+
+        public virtual async Task<T> GetById(int id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            return entity;
+        }
+
+        //public virtual async Task<T> GetByCuil(long cuil)
+        //{
+        //    var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
+        //    var entity = await _context.Set<T>().FindAsync(usuario.);
+        //    return entity;
+        //}
     }
 }

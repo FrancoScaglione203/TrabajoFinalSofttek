@@ -25,6 +25,7 @@ namespace TrabajoFinalSofttek
                 });
             });
 
+            builder.Services.AddHttpClient();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +63,7 @@ namespace TrabajoFinalSofttek
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWorkService>();
+            builder.Services.AddScoped<DolarCotizacion>();
 
 
             builder.Services.AddAuthorization(option =>
