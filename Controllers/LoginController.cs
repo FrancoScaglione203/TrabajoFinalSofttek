@@ -22,7 +22,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// Login con cuil y clave de Usuario
         /// </summary>
         /// <param name="dto"></param>
-        /// <returns>Retorna 200 si se loguea o 401 si algun dato es incorrecto</returns>
+        /// <returns>Retorna Ok(200) si se loguea o Unauthorized(401) si algun dato es incorrecto</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(AuthenticateDto dto)
