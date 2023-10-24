@@ -42,18 +42,15 @@ namespace TrabajoFinalSofttek.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("cuentaCripto_UUID");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("usuario_id");
+
                     b.HasKey("Id");
 
-                    b.ToTable("CuentasCriptos");
+                    b.HasIndex("UsuarioId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activo = true,
-                            Saldo = 10m,
-                            UUID = 2222333L
-                        });
+                    b.ToTable("CuentasCriptos");
                 });
 
             modelBuilder.Entity("TrabajoFinalSofttek.Entities.CuentaFiduciaria", b =>
@@ -90,21 +87,15 @@ namespace TrabajoFinalSofttek.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("cuentaFiduciaria_saldoPesos");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("usuario_id");
+
                     b.HasKey("Id");
 
-                    b.ToTable("CuentasFiduciarias");
+                    b.HasIndex("UsuarioId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activo = true,
-                            Alias = "alias",
-                            CBU = 111111111111111L,
-                            NumeroCuenta = 1,
-                            SaldoDolares = 100m,
-                            SaldoPesos = 10000m
-                        });
+                    b.ToTable("CuentasFiduciarias");
                 });
 
             modelBuilder.Entity("TrabajoFinalSofttek.Entities.Historial", b =>
@@ -120,8 +111,8 @@ namespace TrabajoFinalSofttek.Migrations
                         .HasColumnType("int")
                         .HasColumnName("moneda_id");
 
-                    b.Property<long>("Monto")
-                        .HasColumnType("bigint")
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("historial_monto");
 
                     b.Property<int>("TipoMovimientoId")
@@ -147,7 +138,7 @@ namespace TrabajoFinalSofttek.Migrations
                         {
                             Id = 1,
                             MonedaId = 1,
-                            Monto = 10000L,
+                            Monto = 10000m,
                             TipoMovimientoId = 1,
                             UsuarioId = 1
                         });
@@ -243,28 +234,26 @@ namespace TrabajoFinalSofttek.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("usuario_activo");
 
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("usuario_apellido");
+
                     b.Property<string>("Clave")
                         .IsRequired()
                         .HasColumnType("VARCHAR(250)")
                         .HasColumnName("usuario_clave");
 
-                    b.Property<int>("CuentaCriptoId")
-                        .HasColumnType("int")
-                        .HasColumnName("cuentaCripto_id");
-
-                    b.Property<int>("CuentaFiduciariaId")
-                        .HasColumnType("int")
-                        .HasColumnName("cuentaFiduciaria_id");
-
                     b.Property<long>("Cuil")
                         .HasColumnType("bigint")
                         .HasColumnName("usuario_cuil");
 
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("usuario_nombre");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("CuentaCriptoId");
-
-                    b.HasIndex("CuentaFiduciariaId");
 
                     b.ToTable("Usuarios");
 
@@ -273,11 +262,33 @@ namespace TrabajoFinalSofttek.Migrations
                         {
                             Id = 1,
                             Activo = true,
+                            Apellido = "Scaglione",
                             Clave = "1234",
-                            CuentaCriptoId = 1,
-                            CuentaFiduciariaId = 1,
-                            Cuil = 20424465306L
+                            Cuil = 11111111L,
+                            Nombre = "Franco"
                         });
+                });
+
+            modelBuilder.Entity("TrabajoFinalSofttek.Entities.CuentaCripto", b =>
+                {
+                    b.HasOne("TrabajoFinalSofttek.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("TrabajoFinalSofttek.Entities.CuentaFiduciaria", b =>
+                {
+                    b.HasOne("TrabajoFinalSofttek.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("TrabajoFinalSofttek.Entities.Historial", b =>
@@ -305,25 +316,6 @@ namespace TrabajoFinalSofttek.Migrations
                     b.Navigation("TipoMovimiento");
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("TrabajoFinalSofttek.Entities.Usuario", b =>
-                {
-                    b.HasOne("TrabajoFinalSofttek.Entities.CuentaCripto", "CuentaCripto")
-                        .WithMany()
-                        .HasForeignKey("CuentaCriptoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TrabajoFinalSofttek.Entities.CuentaFiduciaria", "CuentaFiduciaria")
-                        .WithMany()
-                        .HasForeignKey("CuentaFiduciariaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CuentaCripto");
-
-                    b.Navigation("CuentaFiduciaria");
                 });
 #pragma warning restore 612, 618
         }

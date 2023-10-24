@@ -11,10 +11,10 @@ namespace TrabajoFinalSofttek.DataAccess.DataBaseSeeding
                 new Usuario
                 {
                     Id = 1,
-                    Cuil = 20424465306,
+                    Cuil = 11111111,
+                    Nombre = "Franco",
+                    Apellido = "Scaglione",
                     Clave = "1234", //DESPUES ENCRIPTARLA
-                    CuentaFiduciariaId = 1,
-                    CuentaCriptoId = 1,
                     Activo = true
                 });
         }

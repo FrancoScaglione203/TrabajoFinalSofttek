@@ -34,10 +34,9 @@ namespace TrabajoFinalSofttek.Controllers
 
             var usuario = new UsuarioLoginDto()
             {
-                //Id = usuarioCredentials.Id,    VER SI NECESITO PASAR EL ID, SE RECOMIENDO NO PASARLO POR BODY
                 Cuil = usuarioCredentials.Cuil,
-                CuentaFiduciariaId = usuarioCredentials.CuentaFiduciariaId,
-                CuentaCriptoId = usuarioCredentials.CuentaCriptoId,
+                Nombre = usuarioCredentials.Nombre,
+                Apellido = usuarioCredentials.Apellido,
                 Token = token
             };
 

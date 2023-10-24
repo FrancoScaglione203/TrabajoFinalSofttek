@@ -12,7 +12,7 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             _context = context;
         }
 
-        public virtual async Task<bool> Insert(T entity)
+        public virtual async Task<bool> Agregar(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
             return true;

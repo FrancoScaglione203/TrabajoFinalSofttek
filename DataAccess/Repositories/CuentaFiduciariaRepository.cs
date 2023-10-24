@@ -15,7 +15,7 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         public async Task<CuentaFiduciaria> GetByCuil(long cuil)
         {
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
-            var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.Id == usuario.CuentaFiduciariaId);
+            var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.UsuarioId == usuario.Id);
             return cuentaFiduciaria;
         }
 
@@ -59,32 +59,51 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             else { return false; }
         }
 
-        //public async Task<bool> TransferenciaByCuil(long cuil, decimal monto, int tipoTransfer)
-        //{
-        //    var cuentaFiduciaria = await GetByCuil(cuil);
-        //    if (cuentaFiduciaria == null) { return false; }
-        //    //FALTAN VALIDACIONES DEL MONTO Y SALDO
+        public async Task<decimal> ConsultaCompraDolares(long cuil, decimal dolarCotiz)
+        {
 
-        //    if (tipoTransfer == 1)  //Pesos a dolares
-        //    {
-        //        cuentaFiduciaria.SaldoPesos -= monto;
-        //    }
-        //    if (tipoTransfer == 2) //Pesos a BTC
-        //    {
-        //        cuentaFiduciaria.SaldoDolares -= monto;
-        //    }
-        //    if (tipoTransfer == 3) //Dolares a Pesos
-        //    {
-        //        cuentaFiduciaria.SaldoDolares -= monto;
-        //    }
-        //    if (tipoTransfer == 4) //Dolares a BTC
-        //    {
-        //        cuentaFiduciaria.SaldoDolares -= monto;
-        //    }
+            var cuentaFiduciaria = await GetByCuil(cuil);
 
+            decimal consulta = (cuentaFiduciaria.SaldoPesos / dolarCotiz);
+            return consulta;
+        }
 
-        //    _context.CuentasFiduciarias.Update(cuentaFiduciaria);
-        //    return true;
-        //}
+        public async Task<bool> CompraDolares(long cuil, decimal dolarCotiz, decimal monto)
+        {
+
+            var cuentaFiduciaria = await GetByCuil(cuil);
+            decimal maximo = await ConsultaCompraDolares(cuil, dolarCotiz);
+            decimal pesos = monto * dolarCotiz;
+
+            if (cuentaFiduciaria == null || monto <= 0 || monto > maximo) { return false; }
+            
+            cuentaFiduciaria.SaldoPesos -= pesos;
+            cuentaFiduciaria.SaldoDolares += monto;
+            _context.CuentasFiduciarias.Update(cuentaFiduciaria);
+            return true;   
+        }
+
+        public async Task<decimal> ConsultaVentaDolares(long cuil, decimal dolarCotiz)
+        {
+
+            var cuentaFiduciaria = await GetByCuil(cuil);
+
+            decimal consulta = (cuentaFiduciaria.SaldoDolares * dolarCotiz);
+            return consulta;
+        }
+
+        public async Task<bool> VentaDolares(long cuil, decimal dolarCotiz, decimal monto)
+        {
+            var cuentaFiduciaria = await GetByCuil(cuil);
+            decimal pesos = monto * dolarCotiz;
+
+            if (cuentaFiduciaria == null || monto <= 0 || monto > cuentaFiduciaria.SaldoDolares) { return false; }
+
+            cuentaFiduciaria.SaldoPesos += pesos;
+            cuentaFiduciaria.SaldoDolares -= monto;
+            _context.CuentasFiduciarias.Update(cuentaFiduciaria);
+            return true;
+        }
+
     }
 }
