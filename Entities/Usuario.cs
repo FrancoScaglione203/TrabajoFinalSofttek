@@ -11,8 +11,6 @@ namespace TrabajoFinalSofttek.Entities
         {
             Cuil = dto.Cuil;
             Clave = dto.Clave;
-            CuentaFiduciariaId = dto.CuentaFiduciariaId;
-            CuentaCriptoId = dto.CuentaCriptoId;
             Activo = true;
         }
 
@@ -30,18 +28,16 @@ namespace TrabajoFinalSofttek.Entities
         public long Cuil { get; set; }
 
         [Required]
+        [Column("usuario_nombre")]
+        public string Nombre { get; set; }
+
+        [Required]
+        [Column("usuario_apellido")]
+        public string Apellido { get; set; }
+
+        [Required]
         [Column("usuario_clave", TypeName = "VARCHAR(250)")]
         public string Clave { get; set; }
-
-        [Required]
-        [Column("cuentaFiduciaria_id")]
-        public int CuentaFiduciariaId { get; set; }
-        public CuentaFiduciaria CuentaFiduciaria { get; set; }
-
-        [Required]
-        [Column("cuentaCripto_id")]
-        public int CuentaCriptoId { get; set; }
-        public CuentaCripto CuentaCripto { get; set; }
 
         [Required]
         [Column("usuario_activo")]

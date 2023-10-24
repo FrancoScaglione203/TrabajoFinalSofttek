@@ -8,6 +8,7 @@ namespace TrabajoFinalSofttek.Entities
     {
         public CuentaCripto(CuentaCriptoDto dto)
         {
+            UsuarioId = dto.UsuarioId;
             UUID = dto.UUID;
             Saldo = dto.Saldo;
             Activo = true;
@@ -20,6 +21,11 @@ namespace TrabajoFinalSofttek.Entities
 
         [Column("cuentaCripto_id")]
         public int Id { get; set; }
+
+
+        [Column("usuario_id")]
+        public int UsuarioId { get; set; }
+        public Usuario Usuario { get; set; }
 
         [Column("cuentaCripto_UUID")]
         public long UUID { get; set; }

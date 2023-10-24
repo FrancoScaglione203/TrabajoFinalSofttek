@@ -10,10 +10,6 @@ namespace TrabajoFinalSofttek.DTOs
 
         public long Cuil { get; set; }
         public string Clave { get; set; }
-        public CuentaFiduciariaDto CuentaFiduciariaDto { get; set; }        
-        public int CuentaFiduciariaId { get; set; }
-        public CuentaCriptoDto CuentaCriptoDto { get; set; }
-        public int CuentaCriptoId { get; set; }
         public bool Activo { get; set; }
     }
 }

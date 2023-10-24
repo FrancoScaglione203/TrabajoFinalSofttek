@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TrabajoFinalSofttek.DTOs;
 
@@ -8,6 +9,7 @@ namespace TrabajoFinalSofttek.Entities
     {
         public CuentaFiduciaria(CuentaFiduciariaDto dto)
         {
+            UsuarioId = dto.UsuarioId;
             CBU = dto.CBU;
             Alias = dto.Alias;
             NumeroCuenta = dto.NumeroCuenta;
@@ -23,6 +25,11 @@ namespace TrabajoFinalSofttek.Entities
 
         [Column("cuentaFiduciaria_id")]
         public int Id { get; set; }
+
+
+        [Column("usuario_id")]
+        public int UsuarioId { get; set; }
+        public Usuario Usuario { get; set; }
 
         [Column("cuentaFiduciaria_CBU")]
         public long CBU { get; set; }

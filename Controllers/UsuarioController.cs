@@ -43,24 +43,11 @@ namespace TrabajoFinalSofttek.Controllers
         [Route("Agregar")]
         public async Task<IActionResult> Agregar(UsuarioDto dto)
         {
+            if (await _unitOfWork.UsuarioRepository.UsuarioEx(dto.Cuil)) return Conflict($"Ya existe un usuario registrado con la descripcion:{dto.Cuil}");
             var usuario = new Usuario(dto);
-
-            var cuentaFiduciaria = new CuentaFiduciaria(dto.CuentaFiduciariaDto);
-            await _unitOfWork.CuentaFiduciariaRepository.Insert(cuentaFiduciaria);
-
-
-            var cuentaCripto = new CuentaCripto(dto.CuentaCriptoDto);
-            await _unitOfWork.CuentaCriptoRepository.Insert(cuentaCripto);
-
-
-            await _unitOfWork.Complete();
-
-            usuario.CuentaFiduciariaId = cuentaFiduciaria.Id;
-            usuario.CuentaCriptoId = cuentaCripto.Id;
 
             await _unitOfWork.UsuarioRepository.Agregar(usuario);
             await _unitOfWork.Complete();
-
 
             return Ok("Usuario registrado con éxito!");
         }

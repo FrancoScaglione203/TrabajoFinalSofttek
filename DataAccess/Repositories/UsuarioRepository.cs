@@ -12,37 +12,16 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         {
         }
 
-        public virtual async Task<bool> Agregar(Usuario usuario)
+
+        public async Task<bool> UsuarioEx(long Cuil)
         {
-
-            await _context.Set<Usuario>().AddAsync(usuario);
-
-
-            return true;
-        }
-
-        public virtual async Task<bool> AgregarTodo(Usuario usuario, CuentaFiduciaria cuentaFiduciaria, CuentaCripto cuentaCripto)
-        {
-            cuentaFiduciaria.Id = 0;
-            cuentaCripto.Id = 0;
-
-            await _context.Set<CuentaFiduciaria>().AddAsync(cuentaFiduciaria);
-            await _context.Set<CuentaCripto>().AddAsync(cuentaCripto);
-
-            await _context.SaveChangesAsync();
-
-            usuario.CuentaFiduciariaId = cuentaFiduciaria.Id;
-            usuario.CuentaCriptoId = cuentaCripto.Id;
-
-            await _context.Set<Usuario>().AddAsync(usuario);
-
-
-            return true;
+            return await _context.Usuarios.AnyAsync(x => x.Cuil == Cuil);
         }
 
         public async Task<Usuario?> AuthenticateCredentials(AuthenticateDto dto)
         {
             return await _context.Usuarios.SingleOrDefaultAsync(x => x.Cuil == dto.Cuil && x.Clave == dto.Clave);
         }
+
     }
 }
