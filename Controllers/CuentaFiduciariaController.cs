@@ -47,36 +47,77 @@ namespace TrabajoFinalSofttek.Controllers
             return Ok("Cuenta agregada con éxito!");
         }
 
+
         /// <summary>
-        /// Devuelve la cuenta fiduciaria que corresponde al cuil ingresado
+        /// Muestra todas las cuentas de cripto del cuil enviado
         /// </summary>
         /// <param name="cuil"></param>
-        /// <returns>Retorna datos CuentaFiduciaria seleccionada</returns>
-        //[Authorize]
-        [HttpGet("CuentaByCuil/{cuil}")]
-        public async Task<IActionResult> GetByCuil([FromRoute] long cuil)
+        /// <returns>Retorna lista de CuentaCripto que tiene el idUsuario que coincide con el cuil</returns>
+        [HttpGet]
+        [Route("CuentasByCuil/{cuil}")]
+        public async Task<IActionResult> GetAllByCuil([FromRoute] long cuil)
         {
-            var cuentaFiduciaria = await _unitOfWork.CuentaFiduciariaRepository.GetByCuil(cuil);
-            if (cuentaFiduciaria == null)
-            {
-                return BadRequest("El Cuil proporcionado no existe.");
-            }
-            return Ok(cuentaFiduciaria);
+            var cuentas = await _unitOfWork.CuentaFiduciariaRepository.GetAllByCuil(cuil);
+
+            return Ok(cuentas);
         }
 
 
         /// <summary>
-        /// Deposita
+        /// Devuelve la cuenta con el NroCuenta ingresado
         /// </summary>
-        /// <param name="cuil"></param>
-        /// <param name="monto"></param>
-        /// <param name="idMoneda"></param>
-        /// <returns></returns>
-        //[Authorize]
-        [HttpPut("DepositoByCuil/{cuil}")]
-        public async Task<IActionResult> Deposito([FromRoute] long cuil, decimal monto, int idMoneda)
+        /// <param name="NroCuenta"></param>
+        /// <returns>retorna la cuenta solicitada</returns>
+        [HttpGet]
+        [Route("CuentaByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> GetByNroCuenta([FromRoute] int NroCuenta)
         {
-            var result = await _unitOfWork.CuentaFiduciariaRepository.DepositoByCuil(cuil, monto, idMoneda);
+            var cuenta = await _unitOfWork.CuentaFiduciariaRepository.GetByNroCuenta(NroCuenta);
+
+            return Ok(cuenta);
+        }
+
+
+        /// <summary>
+        /// Devuelve el saldo de Pesos de la cuenta con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns>retorna un valor decimal con el saldo de la cuenta</returns>
+        [HttpGet]
+        [Route("SaldoPesosByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> SaldoByNroCuenta([FromRoute] int NroCuenta)
+        {
+            decimal saldo = await _unitOfWork.CuentaFiduciariaRepository.GetSaldoPesosByNroCuenta(NroCuenta);
+
+            return Ok(saldo);
+        }
+
+
+        /// <summary>
+        /// Devuelve el saldo de Dolares de la cuenta con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns>retorna un valor decimal con el saldo de la cuenta</returns>
+        [HttpGet]
+        [Route("SaldoDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> SaldoDolaresByNroCuenta([FromRoute] int NroCuenta)
+        {
+            decimal saldo = await _unitOfWork.CuentaFiduciariaRepository.GetSaldoDolaresByNroCuenta(NroCuenta);
+
+            return Ok(saldo);
+        }
+
+
+        /// <summary>
+        /// Deposita el monto ingresado en el cuenta Fiduciaria con el NroCuenta que se ingreso
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("DepositoPesosByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> DepositoPesos([FromRoute] int NroCuenta, decimal monto)
+        {
+            var result = await _unitOfWork.CuentaFiduciariaRepository.DepositoPesosByNroCuenta(NroCuenta, monto);
             if (!result)
             {
                 return StatusCode(500, "Ocurrió un error interno en el servidor.");
@@ -88,18 +129,39 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
+
         /// <summary>
-        /// Extrae el monto de la moneda que se solicita siempre y cuando no sea un monto mayor al saldo que hay en la cuenta
+        /// Deposita el monto ingresado en el cuenta Fiduciaria con el NroCuenta que se ingreso
         /// </summary>
-        /// <param name="cuil"></param>
+        /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
-        /// <param name="idMoneda"></param>
-        /// <returns>Retorna 200 si completo la extraccion o 500 si hubo un error</returns>
-        //[Authorize]
-        [HttpPut("ExtraccionByCuil/{cuil}")]
-        public async Task<IActionResult> Extraccion([FromRoute] long cuil, decimal monto, int idMoneda)
+        /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("DepositoDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> DepositoDolares([FromRoute] int NroCuenta, decimal monto)
         {
-            var result = await _unitOfWork.CuentaFiduciariaRepository.ExtraccionByCuil(cuil, monto, idMoneda);
+            var result = await _unitOfWork.CuentaFiduciariaRepository.DepositoDolaresByNroCuenta(NroCuenta, monto);
+            if (!result)
+            {
+                return StatusCode(500, "Ocurrió un error interno en el servidor.");
+            }
+            else
+            {
+                await _unitOfWork.Complete();
+                return Ok("Depositado con exito!");
+            };
+        }
+
+
+        /// <summary>
+        /// Extrae el monto ingresado de la cuenta Fiduciaria con el NroCuenta que se ingreso
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("ExtraccionPesosByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> ExtraccionPesos([FromRoute] int NroCuenta, decimal monto)
+        {
+            var result = await _unitOfWork.CuentaFiduciariaRepository.ExtraccionPesosByNroCuenta(NroCuenta, monto);
             if (!result)
             {
                 return StatusCode(500, "Ocurrió un error interno en el servidor.");
@@ -111,32 +173,55 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
-        /// <summary>
-        /// Devuelve la cantidad de Dolares que se pueden comprar con los pesos 
-        /// </summary>
-        /// <param name="cuil"></param>
-        /// <returns>Retorna decimal que equivale el maximo de Dolares que se pueden comprar</returns>
-        [HttpGet("ConsultaCompraUSDByCuil/{cuil}")]
-        public async Task<IActionResult> ConsultaCompra([FromRoute] long cuil)
-        {
-            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            decimal consultaCompraUSD = await _unitOfWork.CuentaFiduciariaRepository.ConsultaCompraDolares(cuil, dolarCotiz);
 
-            return Ok(consultaCompraUSD);
+        /// <summary>
+        /// Extrae el monto ingresado de la cuenta Fiduciaria con el NroCuenta que se ingreso
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("ExtraccionDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> ExtraccionDolares([FromRoute] int NroCuenta, decimal monto)
+        {
+            var result = await _unitOfWork.CuentaFiduciariaRepository.ExtraccionDolaresByNroCuenta(NroCuenta, monto);
+            if (!result)
+            {
+                return StatusCode(500, "Ocurrió un error interno en el servidor.");
+            }
+            else
+            {
+                await _unitOfWork.Complete();
+                return Ok("Extraccion exitosa!");
+            };
         }
 
 
         /// <summary>
-        /// 
+        /// Devuelve el equivalente en Pesos del SaldoDolares de la cuenta con el NroCuenta ingresado
         /// </summary>
-        /// <param name="cuil"></param>
-        /// <param name="monto"></param>
-        /// <returns></returns>
-        [HttpPut("CompraUSDByCuil/{cuil}")]
-        public async Task<IActionResult> Compra([FromRoute] long cuil, decimal monto)
+        /// <param name="NroCuenta"></param>
+        /// <returns>Retorna ok(200) finalizada la consulta</returns>
+        [HttpGet("ConsultaVentaDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> ConsultaVentaDolares([FromRoute] int NroCuenta)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            var result = await _unitOfWork.CuentaFiduciariaRepository.CompraDolares(cuil, dolarCotiz, monto);
+            decimal consultaVentaDolares = await _unitOfWork.CuentaFiduciariaRepository.ConsultaVentaDolaresByNroCuenta(NroCuenta, dolarCotiz);
+
+            return Ok(consultaVentaDolares);
+        }
+
+
+        /// <summary>
+        /// Vende la cantidad de Dolares indicadas de la cuenta con el NroCuenta ingresado y las deposita en el nro de cuenta en pesos
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("VentaDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> Venta([FromRoute] int NroCuenta, decimal monto)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            var result = await _unitOfWork.CuentaFiduciariaRepository.VentaDolares(NroCuenta, dolarCotiz, monto);
             if (!result)
             {
                 return StatusCode(500, "Ocurrió un error interno en el servidor.");
@@ -148,33 +233,18 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
-
         /// <summary>
-        /// 
+        /// Tranfiere pesos de la cuenta origen a la cuenta destino
         /// </summary>
-        /// <param name="cuil"></param>
-        /// <returns></returns>
-        [HttpGet("ConsultaVentaUSDByCuil/{cuil}")]
-        public async Task<IActionResult> ConsultaVenta([FromRoute] long cuil)
-        {
-            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            decimal consultaVentaUSD = await _unitOfWork.CuentaFiduciariaRepository.ConsultaVentaDolares(cuil, dolarCotiz);
-
-            return Ok(consultaVentaUSD);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cuil"></param>
+        /// <param name="OringenNroCuenta"></param>
+        /// <param name="DestinoNroCuenta"></param>
         /// <param name="monto"></param>
-        /// <returns></returns>
-        [HttpPut("VentaUSDByCuil/{cuil}")]
-        public async Task<IActionResult> Venta([FromRoute] long cuil, decimal monto)
+        /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
+        [HttpPut("TransferenciaPesos")]
+        public async Task<IActionResult> TransferenciaPesos(int OringenNroCuenta, int DestinoNroCuenta, decimal monto)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            var result = await _unitOfWork.CuentaFiduciariaRepository.VentaDolares(cuil, dolarCotiz, monto);
+            var result = await _unitOfWork.CuentaFiduciariaRepository.TransferenciaPesos(OringenNroCuenta, DestinoNroCuenta, monto);
             if (!result)
             {
                 return StatusCode(500, "Ocurrió un error interno en el servidor.");
@@ -182,8 +252,33 @@ namespace TrabajoFinalSofttek.Controllers
             else
             {
                 await _unitOfWork.Complete();
-                return Ok("Compra exitosa!");
+                return Ok("Transferencia exitosa!");
             };
         }
+
+
+        /// <summary>
+        /// Tranfiere dolares de la cuenta origen a la cuenta destino
+        /// </summary>
+        /// <param name="OringenNroCuenta"></param>
+        /// <param name="DestinoNroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
+        [HttpPut("TransferenciaDolares")]
+        public async Task<IActionResult> TransferenciaDolares(int OringenNroCuenta, int DestinoNroCuenta, decimal monto)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            var result = await _unitOfWork.CuentaFiduciariaRepository.TransferenciaDolares(OringenNroCuenta, DestinoNroCuenta, monto);
+            if (!result)
+            {
+                return StatusCode(500, "Ocurrió un error interno en el servidor.");
+            }
+            else
+            {
+                await _unitOfWork.Complete();
+                return Ok("Transferencia exitosa!");
+            };
+        }
+
     }
 }

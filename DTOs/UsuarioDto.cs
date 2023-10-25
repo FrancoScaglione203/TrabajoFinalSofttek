@@ -9,6 +9,8 @@ namespace TrabajoFinalSofttek.DTOs
     {
 
         public long Cuil { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
         public string Clave { get; set; }
         public bool Activo { get; set; }
     }

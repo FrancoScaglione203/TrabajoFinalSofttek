@@ -11,22 +11,32 @@ namespace TrabajoFinalSofttek.DataAccess.DataBaseSeeding
                 new TipoMovimiento
                 {
                     Id = 1,
-                    Descripcion = "Consulta"
-                },
-                new TipoMovimiento
-                {
-                    Id = 2,
                     Descripcion = "Deposito"
                 },
                 new TipoMovimiento
                 {
-                    Id = 3,
+                    Id = 2,
                     Descripcion = "Extraccion"
                 },
                 new TipoMovimiento
                 {
+                    Id = 3,
+                    Descripcion = "Venta"
+                },
+                new TipoMovimiento
+                {
                     Id = 4,
+                    Descripcion = "Compra"
+                },
+                new TipoMovimiento
+                {
+                    Id = 5,
                     Descripcion = "Transferencia"
+                },
+                new TipoMovimiento
+                {
+                    Id = 6,
+                    Descripcion = "Consulta"
                 });
         }
     }

@@ -65,33 +65,32 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
-        //public async Task<decimal> ConsultaCompraBTC(long UUID, decimal dolarCotiz)
-        //{
-        //    var cuentaCripto = await GetByUUID(UUID);
-        //    var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Id == cuentaCripto.UsuarioId);
-        //    var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.UsuarioId == usuario.Id);
+        public async Task<decimal> ConsultaCompraBTC(long UUID, decimal dolarCotiz)
+        {
+            var cuentaCripto = await GetByUUID(UUID);
+            var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Id == cuentaCripto.UsuarioId);
+            var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.UsuarioId == usuario.Id);
 
-        //    decimal consulta = ((cuentaFiduciaria.SaldoPesos / dolarCotiz)/1500);   //1500 representa el valor de BTC en dolares, la idea es obtener ese valor 
-        //    return consulta;                                                        //por medio de una API externa
-        //}
+            decimal consulta = ((cuentaFiduciaria.SaldoPesos / dolarCotiz) / 1500);   //1500 representa el valor de BTC en dolares, la idea es obtener ese valor 
+            return consulta;                                                        //por medio de una API externa
+        }
 
 
-        //public async Task<bool> CompraBTC(long cuil, decimal dolarCotiz, decimal monto)
-        //{
-        //    var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
-        //    var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.UsuarioId == usuario.Id);
-        //    var cuentaCripto = await GetByCuil(cuil);
-        //    decimal maximo = await ConsultaCompraBTC(cuil, dolarCotiz);
-        //    decimal pesos = ((monto * 1500)*dolarCotiz);
+        public async Task<bool> CompraBTC(long UUID, decimal dolarCotiz, decimal monto, int NroCuenta)
+        {
+            var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.NumeroCuenta == NroCuenta);
+            var cuentaCripto = await GetByUUID(UUID);
+            decimal maximo = await ConsultaCompraBTC(UUID, dolarCotiz);
+            decimal pesos = ((monto * 1500) * dolarCotiz);
 
-        //    if (cuentaFiduciaria == null || cuentaCripto == null || monto <= 0 || monto > maximo) { return false; }
+            if (cuentaFiduciaria == null || cuentaCripto == null || monto <= 0 || monto > maximo) { return false; }
 
-        //    cuentaFiduciaria.SaldoPesos -= pesos;
-        //    cuentaCripto.Saldo += monto;
-        //    _context.CuentasFiduciarias.Update(cuentaFiduciaria);
-        //    _context.CuentasCriptos.Update(cuentaCripto);
-        //    return true;
-        //}
+            cuentaFiduciaria.SaldoPesos -= pesos;
+            cuentaCripto.Saldo += monto;
+            _context.CuentasFiduciarias.Update(cuentaFiduciaria);
+            _context.CuentasCriptos.Update(cuentaCripto);
+            return true;
+        }
 
         public async Task<decimal> ConsultaVentaBTC(long UUID, decimal dolarCotiz)
         {
@@ -117,6 +116,21 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             cuentaCripto.Saldo -= monto;
             _context.CuentasFiduciarias.Update(cuentaFiduciaria);
             _context.CuentasCriptos.Update(cuentaCripto);
+            return true;
+        }
+
+        public async Task<bool> TransferenciaBTC(long OrigenUUID, long DestinoUUID, decimal monto)
+        {
+            var cuentaOrigen = await GetByUUID(OrigenUUID);
+            var cuentaDestino = await GetByUUID(DestinoUUID);
+
+            if (cuentaOrigen == null || cuentaDestino == null || monto <= 0 || monto > cuentaOrigen.Saldo || OrigenUUID == DestinoUUID) { return false; }
+
+            cuentaOrigen.Saldo -= monto;
+            cuentaDestino.Saldo += monto;
+
+            _context.CuentasCriptos.Update(cuentaOrigen);
+            _context.CuentasCriptos.Update(cuentaDestino);
             return true;
         }
 

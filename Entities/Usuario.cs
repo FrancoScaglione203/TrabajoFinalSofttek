@@ -10,6 +10,8 @@ namespace TrabajoFinalSofttek.Entities
         public Usuario(UsuarioDto dto)
         {
             Cuil = dto.Cuil;
+            Nombre = dto.Nombre;
+            Apellido = dto.Apellido;
             Clave = dto.Clave;
             Activo = true;
         }
