@@ -107,6 +107,10 @@ namespace TrabajoFinalSofttek.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<long>("Cuil")
+                        .HasColumnType("bigint")
+                        .HasColumnName("historial_cuil_destino");
+
                     b.Property<int>("MonedaId")
                         .HasColumnType("int")
                         .HasColumnName("moneda_id");
@@ -132,16 +136,6 @@ namespace TrabajoFinalSofttek.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Historiales");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            MonedaId = 1,
-                            Monto = 10000m,
-                            TipoMovimientoId = 1,
-                            UsuarioId = 1
-                        });
                 });
 
             modelBuilder.Entity("TrabajoFinalSofttek.Entities.Moneda", b =>
@@ -202,22 +196,32 @@ namespace TrabajoFinalSofttek.Migrations
                         new
                         {
                             Id = 1,
-                            Descripcion = "Consulta"
-                        },
-                        new
-                        {
-                            Id = 2,
                             Descripcion = "Deposito"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             Descripcion = "Extraccion"
                         },
                         new
                         {
+                            Id = 3,
+                            Descripcion = "Venta"
+                        },
+                        new
+                        {
                             Id = 4,
+                            Descripcion = "Compra"
+                        },
+                        new
+                        {
+                            Id = 5,
                             Descripcion = "Transferencia"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Descripcion = "Consulta"
                         });
                 });
 

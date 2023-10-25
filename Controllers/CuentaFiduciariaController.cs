@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using TrabajoFinalSofttek.DTOs;
 using TrabajoFinalSofttek.Entities;
+using TrabajoFinalSofttek.Helpers;
 using TrabajoFinalSofttek.Services;
 
 namespace TrabajoFinalSofttek.Controllers
@@ -23,20 +24,14 @@ namespace TrabajoFinalSofttek.Controllers
         }
 
 
+        
         /// <summary>
-        /// EndPoint para testear la API externa para obtener el valor del dolar
+        /// Agrega una CuentaFiduciaria a DB
         /// </summary>
+        /// <param name="dto"></param>
         /// <returns></returns>
-        //[Authorize]
-        [HttpGet]
-        [Route("CotizacionDolar")]
-        public async Task<Decimal> Dolar()
-        {
-                decimal valor = await _dolarCotizacion.ValorDolar();
-                return valor;
-        }
-
         [HttpPost]
+        [Authorize]
         [Route("Agregar")]
         public async Task<IActionResult> Agregar(CuentaFiduciariaDto dto)
         {
@@ -49,11 +44,26 @@ namespace TrabajoFinalSofttek.Controllers
 
 
         /// <summary>
+        /// EndPoint que devuelve la cotizacion del dolar actualizada
+        /// </summary>
+        /// <returns></returns>
+        //[Authorize]
+        [HttpGet]
+        [Authorize]
+        [Route("CotizacionDolar")]
+        public async Task<Decimal> Dolar()
+        {
+            decimal valor = await _dolarCotizacion.ValorDolar();
+            return valor;
+        }
+
+        /// <summary>
         /// Muestra todas las cuentas de cripto del cuil enviado
         /// </summary>
         /// <param name="cuil"></param>
         /// <returns>Retorna lista de CuentaCripto que tiene el idUsuario que coincide con el cuil</returns>
         [HttpGet]
+        [Authorize]
         [Route("CuentasByCuil/{cuil}")]
         public async Task<IActionResult> GetAllByCuil([FromRoute] long cuil)
         {
@@ -69,6 +79,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <returns>retorna la cuenta solicitada</returns>
         [HttpGet]
+        [Authorize]
         [Route("CuentaByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> GetByNroCuenta([FromRoute] int NroCuenta)
         {
@@ -84,6 +95,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <returns>retorna un valor decimal con el saldo de la cuenta</returns>
         [HttpGet]
+        [Authorize]
         [Route("SaldoPesosByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> SaldoByNroCuenta([FromRoute] int NroCuenta)
         {
@@ -99,6 +111,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <returns>retorna un valor decimal con el saldo de la cuenta</returns>
         [HttpGet]
+        [Authorize]
         [Route("SaldoDolaresByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> SaldoDolaresByNroCuenta([FromRoute] int NroCuenta)
         {
@@ -109,12 +122,30 @@ namespace TrabajoFinalSofttek.Controllers
 
 
         /// <summary>
+        /// Devuelve el equivalente en Pesos del SaldoDolares de la cuenta con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns>Retorna ok(200) finalizada la consulta</returns>
+        [HttpGet]
+        [Authorize]
+        [Route("ConsultaVentaDolaresByNroCuenta/{NroCuenta}")]
+        public async Task<IActionResult> ConsultaVentaDolares([FromRoute] int NroCuenta)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            decimal consultaVentaDolares = await _unitOfWork.CuentaFiduciariaRepository.ConsultaVentaDolaresByNroCuenta(NroCuenta, dolarCotiz);
+
+            return Ok(consultaVentaDolares);
+        }
+
+        /// <summary>
         /// Deposita el monto ingresado en el cuenta Fiduciaria con el NroCuenta que se ingreso
         /// </summary>
         /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("DepositoPesosByNroCuenta/{NroCuenta}")]
+        [HttpPut]
+        [Authorize]
+        [Route("DepositoPesosByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> DepositoPesos([FromRoute] int NroCuenta, decimal monto)
         {
             var result = await _unitOfWork.CuentaFiduciariaRepository.DepositoPesosByNroCuenta(NroCuenta, monto);
@@ -136,7 +167,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("DepositoDolaresByNroCuenta/{NroCuenta}")]
+        [HttpPut]
+        [Authorize]
+        [Route("DepositoDolaresByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> DepositoDolares([FromRoute] int NroCuenta, decimal monto)
         {
             var result = await _unitOfWork.CuentaFiduciariaRepository.DepositoDolaresByNroCuenta(NroCuenta, monto);
@@ -158,7 +191,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("ExtraccionPesosByNroCuenta/{NroCuenta}")]
+        [HttpPut]
+        [Authorize]
+        [Route("ExtraccionPesosByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> ExtraccionPesos([FromRoute] int NroCuenta, decimal monto)
         {
             var result = await _unitOfWork.CuentaFiduciariaRepository.ExtraccionPesosByNroCuenta(NroCuenta, monto);
@@ -180,7 +215,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("ExtraccionDolaresByNroCuenta/{NroCuenta}")]
+        [HttpPut]
+        [Authorize]
+        [Route("ExtraccionDolaresByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> ExtraccionDolares([FromRoute] int NroCuenta, decimal monto)
         {
             var result = await _unitOfWork.CuentaFiduciariaRepository.ExtraccionDolaresByNroCuenta(NroCuenta, monto);
@@ -193,22 +230,7 @@ namespace TrabajoFinalSofttek.Controllers
                 await _unitOfWork.Complete();
                 return Ok("Extraccion exitosa!");
             };
-        }
-
-
-        /// <summary>
-        /// Devuelve el equivalente en Pesos del SaldoDolares de la cuenta con el NroCuenta ingresado
-        /// </summary>
-        /// <param name="NroCuenta"></param>
-        /// <returns>Retorna ok(200) finalizada la consulta</returns>
-        [HttpGet("ConsultaVentaDolaresByNroCuenta/{NroCuenta}")]
-        public async Task<IActionResult> ConsultaVentaDolares([FromRoute] int NroCuenta)
-        {
-            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            decimal consultaVentaDolares = await _unitOfWork.CuentaFiduciariaRepository.ConsultaVentaDolaresByNroCuenta(NroCuenta, dolarCotiz);
-
-            return Ok(consultaVentaDolares);
-        }
+        }   
 
 
         /// <summary>
@@ -217,7 +239,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="NroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("VentaDolaresByNroCuenta/{NroCuenta}")]
+        [HttpPut]
+        [Authorize]
+        [Route("VentaDolaresByNroCuenta/{NroCuenta}")]
         public async Task<IActionResult> Venta([FromRoute] int NroCuenta, decimal monto)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
@@ -240,7 +264,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="DestinoNroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
-        [HttpPut("TransferenciaPesos")]
+        [HttpPut]
+        [Authorize]
+        [Route("TransferenciaPesos")]
         public async Task<IActionResult> TransferenciaPesos(int OringenNroCuenta, int DestinoNroCuenta, decimal monto)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
@@ -264,7 +290,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="DestinoNroCuenta"></param>
         /// <param name="monto"></param>
         /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
-        [HttpPut("TransferenciaDolares")]
+        [HttpPut]
+        [Authorize]
+        [Route("TransferenciaDolares")]
         public async Task<IActionResult> TransferenciaDolares(int OringenNroCuenta, int DestinoNroCuenta, decimal monto)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();

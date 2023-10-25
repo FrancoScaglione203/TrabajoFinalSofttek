@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using TrabajoFinalSofttek.Entities;
 
-namespace TrabajoFinalSofttek.Services
+namespace TrabajoFinalSofttek.Helpers
 {
 
     public class DolarCotizacion

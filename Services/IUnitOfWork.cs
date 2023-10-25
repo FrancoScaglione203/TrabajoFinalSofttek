@@ -7,6 +7,7 @@ namespace TrabajoFinalSofttek.Services
         public UsuarioRepository UsuarioRepository { get; }
         public CuentaFiduciariaRepository CuentaFiduciariaRepository { get; }
         public CuentaCriptoRepository CuentaCriptoRepository { get; }
+        public HistorialRepository HistorialRepository { get; }
         Task<int> Complete();
     }
 }

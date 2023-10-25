@@ -23,9 +23,6 @@ namespace TrabajoFinalSofttek.DataAccess
                 new UsuarioSeeder(),
                 new TipoMovimientoSeeder(),
                 new MonedaSeeder(),
-                new HistorialSeeder(),
-                new CuentaFiduciariaSeeder(),
-                new CuentaCriptoSeeder(),
             };
 
             foreach (var seeder in seeders)

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrabajoFinalSofttek.DTOs;
 using TrabajoFinalSofttek.Entities;
+using TrabajoFinalSofttek.Helpers;
 using TrabajoFinalSofttek.Services;
 
 namespace TrabajoFinalSofttek.Controllers
@@ -23,6 +25,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="dto"></param>
         /// <returns>Retorna Ok(200) cuando finaliza el Endpoint</returns>
         [HttpPost]
+        [Authorize]
         [Route("Agregar")]
         public async Task<IActionResult> Agregar(CuentaCriptoDto dto)
         {
@@ -40,6 +43,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="cuil"></param>
         /// <returns>Retorna lista de CuentaCripto que tiene el idUsuario que coincide con el cuil</returns>
         [HttpGet]
+        [Authorize]
         [Route("CuentasByCuil/{cuil}")]
         public async Task<IActionResult> GetAllByCuil([FromRoute] long cuil)
         {
@@ -54,6 +58,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="UUID"></param>
         /// <returns>retorna la cuenta solicitada</returns>
         [HttpGet]
+        [Authorize]
         [Route("CuentaByUUID/{UUID}")]
         public async Task<IActionResult> GetByUUID([FromRoute] long UUID)
         {
@@ -68,6 +73,7 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="UUID"></param>
         /// <returns>retorna un valor decimal con el saldo de la cuenta</returns>
         [HttpGet]
+        [Authorize]
         [Route("SaldoByUUID/{UUID}")]
         public async Task<IActionResult> SaldoByUUID([FromRoute] long UUID)
         {
@@ -78,12 +84,48 @@ namespace TrabajoFinalSofttek.Controllers
 
 
         /// <summary>
+        /// Devuelve el equivalente en pesos del saldo de la cuenta con el UUID ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <returns>Retorna ok(200) finalizada la consulta</returns>
+        [HttpGet]
+        [Authorize]
+        [Route("ConsultaVentaBTCByUUID/{UUID}")]
+        public async Task<IActionResult> ConsultaVenta([FromRoute] long UUID)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            decimal consultaVentaBTC = await _unitOfWork.CuentaCriptoRepository.ConsultaVentaBTC(UUID, dolarCotiz);
+
+            return Ok(consultaVentaBTC);
+        }
+
+
+        /// <summary>
+        /// Devuelve el equivalente en pesos del saldo de la cuentaCripto con el UUID ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <returns>Retorna ok(200) finalizada la consulta</returns>
+        [HttpGet]
+        [Authorize]
+        [Route("ConsultaCompraBTCByUUID/{UUID}")]
+        public async Task<IActionResult> ConsultaCompra([FromRoute] long UUID)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            decimal consultaCompraBTC = await _unitOfWork.CuentaCriptoRepository.ConsultaCompraBTC(UUID, dolarCotiz);
+
+            return Ok(consultaCompraBTC);
+        }
+
+
+        /// <summary>
         /// Deposita el monto ingresado en el cuenta Cripto con el UUID que se ingreso
         /// </summary>
         /// <param name="UUID"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("DepositoByUUID/{UUID}")]
+        [HttpPut]
+        [Authorize]
+        [Route("DepositoByUUID/{UUID}")]
         public async Task<IActionResult> Deposito([FromRoute] long UUID, decimal monto)
         {
             var result = await _unitOfWork.CuentaCriptoRepository.DepositoByUUID(UUID, monto);
@@ -104,7 +146,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="UUID"></param>
         /// <param name="monto"></param>
         /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("ExtraccionByUUID/{UUID}")]
+        [HttpPut]
+        [Authorize]
+        [Route("ExtraccionByUUID/{UUID}")]
         public async Task<IActionResult> Extraccion([FromRoute] long UUID, decimal monto)
         {
             var result = await _unitOfWork.CuentaCriptoRepository.ExtraccionByUUID(UUID, monto);
@@ -119,19 +163,6 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
-        /// <summary>
-        /// Devuelve el equivalente en pesos del saldo de la cuenta con el UUID ingresado
-        /// </summary>
-        /// <param name="UUID"></param>
-        /// <returns>Retorna ok(200) finalizada la consulta</returns>
-        [HttpGet("ConsultaVentaBTCByUUID/{UUID}")]
-        public async Task<IActionResult> ConsultaVenta([FromRoute] long UUID)
-        {
-            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            decimal consultaVentaBTC = await _unitOfWork.CuentaCriptoRepository.ConsultaVentaBTC(UUID, dolarCotiz);
-
-            return Ok(consultaVentaBTC);
-        }
 
         /// <summary>
         /// Vende la cantidad de BTC indicadas de la cuenta con el UUID ingresado y las deposita en el nro de cuenta en pesos
@@ -140,7 +171,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="monto"></param>
         /// <param name="NroCuentaDestino"></param>
         /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("VentaBTCByUUID/{UUID}")]
+        [HttpPut]
+        [Authorize]
+        [Route("VentaBTCByUUID/{UUID}")]
         public async Task<IActionResult> Venta([FromRoute] long UUID, decimal monto, int NroCuentaDestino)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
@@ -156,20 +189,6 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
-        /// <summary>
-        /// Devuelve el equivalente en pesos del saldo de la cuentaCripto con el UUID ingresado
-        /// </summary>
-        /// <param name="UUID"></param>
-        /// <returns>Retorna ok(200) finalizada la consulta</returns>
-        [HttpGet("ConsultaCompraBTCByUUID/{UUID}")]
-        public async Task<IActionResult> ConsultaCompra([FromRoute] long UUID)
-        {
-            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
-            decimal consultaCompraBTC = await _unitOfWork.CuentaCriptoRepository.ConsultaCompraBTC(UUID, dolarCotiz);
-
-            return Ok(consultaCompraBTC);
-        }
-
 
         /// <summary>
         /// Compra la cantidad de BTC indicadas con los pesos de la CuentaFiduciaria con el NroCuenta ingresado
@@ -178,7 +197,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="monto"></param>
         /// <param name="NroCuenta"></param>
         /// <returns>Retorna ok(200) si compro bien o Error(500) si ocurrio un error</returns>
-        [HttpPut("CompraBTCByUUID/{UUID}")]
+        [HttpPut]
+        [Authorize]
+        [Route("CompraBTCByUUID/{UUID}")]
         public async Task<IActionResult> Compraa([FromRoute] long UUID, decimal monto, int NroCuenta)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
@@ -201,7 +222,9 @@ namespace TrabajoFinalSofttek.Controllers
         /// <param name="DestinoUUID"></param>
         /// <param name="monto"></param>
         /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
-        [HttpPut("TransferenciaBTC")]
+        [HttpPut]
+        [Authorize]
+        [Route("TransferenciaBTC")]
         public async Task<IActionResult> TransferenciaBTC(long OringenUUID, long DestinoUUID, decimal monto)
         {
             decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
