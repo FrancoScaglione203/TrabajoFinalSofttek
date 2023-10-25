@@ -11,12 +11,22 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         {
         }
 
+        /// <summary>
+        /// Devuelve la cuentaFiduciaria con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns></returns>
         public async Task<CuentaFiduciaria> GetByNroCuenta(int NroCuenta)
         {
             var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.NumeroCuenta == NroCuenta);
             return cuentaFiduciaria;
         }
 
+        /// <summary>
+        /// Devuelve el saldo de Pesos del NroCuenta que se ingreso
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns></returns>
         public async Task<decimal> GetSaldoPesosByNroCuenta(int NroCuenta)
         {
             var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.NumeroCuenta == NroCuenta);
@@ -28,6 +38,11 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return saldo;
         }
 
+        /// <summary>
+        /// Devuelve el saldo de Dolares del NroCuenta que se ingreso
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <returns></returns>
         public async Task<decimal> GetSaldoDolaresByNroCuenta(int NroCuenta)
         {
             var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.NumeroCuenta == NroCuenta);
@@ -40,7 +55,11 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
-
+        /// <summary>
+        /// Devuelve la cuentaFiduciaria que corresponde al cuil ingresado
+        /// </summary>
+        /// <param name="cuil"></param>
+        /// <returns></returns>
         public async Task<CuentaFiduciaria> GetByCuil(long cuil)
         {
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
@@ -48,6 +67,11 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return cuentaFiduciaria;
         }
 
+        /// <summary>
+        /// Devuelve todas las cuentasFiduciarias que corresponden al cuil ingresado
+        /// </summary>
+        /// <param name="cuil"></param>
+        /// <returns></returns>
         public async Task<List<CuentaFiduciaria>> GetAllByCuil(long cuil)
         {
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
@@ -57,6 +81,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
+        /// <summary>
+        /// Desposita el monto de pesos indicado en la cuenta con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> DepositoPesosByNroCuenta(int NroCuenta, decimal monto)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -71,6 +101,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+        /// <summary>
+        /// Desposita el monto de dolares indicado en la cuenta con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> DepositoDolaresByNroCuenta(int NroCuenta, decimal monto)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -85,6 +121,13 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+
+        /// <summary>
+        /// Extrae el monto ingresado en Pesos de la cuenta solicitada
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> ExtraccionPesosByNroCuenta(int NroCuenta, decimal monto)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -103,6 +146,13 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             else { return false; }
         }
 
+
+        /// <summary>
+        /// Extrae el monto ingresado en Dolares de la cuenta solicitada
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> ExtraccionDolaresByNroCuenta(int NroCuenta, decimal monto)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -122,6 +172,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
+        /// <summary>
+        /// Retorna el valor del SaldoDolares en pesos
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <returns></returns>
         public async Task<decimal> ConsultaVentaDolaresByNroCuenta(int NroCuenta, decimal dolarCotiz)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -131,6 +187,13 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
+        /// <summary>
+        /// Funcion para vender los dolares y se pasan a pesos
+        /// </summary>
+        /// <param name="NroCuenta"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> VentaDolares(int NroCuenta, decimal dolarCotiz, decimal monto)
         {
             var cuentaFiduciaria = await GetByNroCuenta(NroCuenta);
@@ -148,6 +211,14 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+
+        /// <summary>
+        /// Transferencia de Pesos de una cuenta a la otra
+        /// </summary>
+        /// <param name="OrigenNroCuenta"></param>
+        /// <param name="DestinoNroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> TransferenciaPesos(int OrigenNroCuenta, int DestinoNroCuenta, decimal monto)
         {
             var cuentaOrigen = await GetByNroCuenta(OrigenNroCuenta);
@@ -165,6 +236,14 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+
+        /// <summary>
+        /// Transferencia de Dolares de una cuenta a la otra
+        /// </summary>
+        /// <param name="OrigenNroCuenta"></param>
+        /// <param name="DestinoNroCuenta"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> TransferenciaDolares(int OrigenNroCuenta, int DestinoNroCuenta, decimal monto)
         {
             var cuentaOrigen = await GetByNroCuenta(OrigenNroCuenta);
