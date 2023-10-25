@@ -9,6 +9,7 @@ namespace TrabajoFinalSofttek.Services
         public UsuarioRepository UsuarioRepository { get; private set; }
         public CuentaFiduciariaRepository CuentaFiduciariaRepository { get; private set; }
         public CuentaCriptoRepository CuentaCriptoRepository { get; private set; }
+        public HistorialRepository HistorialRepository { get; private set; }
 
         public UnitOfWorkService(ApplicationDbContext context)
         {
@@ -16,6 +17,7 @@ namespace TrabajoFinalSofttek.Services
             UsuarioRepository = new UsuarioRepository(_context);
             CuentaFiduciariaRepository = new CuentaFiduciariaRepository(_context);
             CuentaCriptoRepository = new CuentaCriptoRepository(_context);
+            HistorialRepository = new HistorialRepository(_context);
         }
 
         public Task<int> Complete()

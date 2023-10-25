@@ -5,6 +5,8 @@ using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
 using TrabajoFinalSofttek.DataAccess;
+using TrabajoFinalSofttek.Entities;
+using TrabajoFinalSofttek.Helpers;
 using TrabajoFinalSofttek.Services;
 
 namespace TrabajoFinalSofttek
@@ -64,6 +66,7 @@ namespace TrabajoFinalSofttek
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWorkService>();
             builder.Services.AddScoped<DolarCotizacion>();
+            builder.Services.AddScoped<Historial>();
 
 
             builder.Services.AddAuthorization(option =>

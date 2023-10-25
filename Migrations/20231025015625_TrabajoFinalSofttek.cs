@@ -105,6 +105,7 @@ namespace TrabajoFinalSofttek.Migrations
                     historial_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
+                    historial_cuil_destino = table.Column<long>(type: "bigint", nullable: false),
                     tipoMovimiento_id = table.Column<int>(type: "int", nullable: false),
                     moneda_id = table.Column<int>(type: "int", nullable: false),
                     historial_monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
@@ -147,21 +148,18 @@ namespace TrabajoFinalSofttek.Migrations
                 columns: new[] { "tipoMovimiento_id", "tipoMovimiento_descripcion" },
                 values: new object[,]
                 {
-                    { 1, "Consulta" },
-                    { 2, "Deposito" },
-                    { 3, "Extraccion" },
-                    { 4, "Transferencia" }
+                    { 1, "Deposito" },
+                    { 2, "Extraccion" },
+                    { 3, "Venta" },
+                    { 4, "Compra" },
+                    { 5, "Transferencia" },
+                    { 6, "Consulta" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "usuario_id", "usuario_activo", "usuario_apellido", "usuario_clave", "usuario_cuil", "usuario_nombre" },
                 values: new object[] { 1, true, "Scaglione", "1234", 11111111L, "Franco" });
-
-            migrationBuilder.InsertData(
-                table: "Historiales",
-                columns: new[] { "historial_id", "moneda_id", "historial_monto", "tipoMovimiento_id", "usuario_id" },
-                values: new object[] { 1, 1, 10000m, 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CuentasCriptos_usuario_id",
