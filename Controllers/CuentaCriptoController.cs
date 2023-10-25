@@ -99,11 +99,11 @@ namespace TrabajoFinalSofttek.Controllers
         }
 
         /// <summary>
-        /// Deposita el monto ingresado en el cuenta Cripto con el UUID que se ingreso
+        /// Extrae el monto ingresado de la cuenta Cripto con el UUID que se ingreso
         /// </summary>
         /// <param name="UUID"></param>
         /// <param name="monto"></param>
-        /// <returns>Retorna ok(200) si deposito bien o Error(500) si ocurrio un error</returns>
+        /// <returns>Retorna ok(200) si extrajo bien o Error(500) si ocurrio un error</returns>
         [HttpPut("ExtraccionByUUID/{UUID}")]
         public async Task<IActionResult> Extraccion([FromRoute] long UUID, decimal monto)
         {
@@ -156,7 +156,65 @@ namespace TrabajoFinalSofttek.Controllers
             };
         }
 
+        /// <summary>
+        /// Devuelve el equivalente en pesos del saldo de la cuentaCripto con el UUID ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <returns>Retorna ok(200) finalizada la consulta</returns>
+        [HttpGet("ConsultaCompraBTCByUUID/{UUID}")]
+        public async Task<IActionResult> ConsultaCompra([FromRoute] long UUID)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            decimal consultaCompraBTC = await _unitOfWork.CuentaCriptoRepository.ConsultaCompraBTC(UUID, dolarCotiz);
+
+            return Ok(consultaCompraBTC);
+        }
 
 
+        /// <summary>
+        /// Compra la cantidad de BTC indicadas con los pesos de la CuentaFiduciaria con el NroCuenta ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="monto"></param>
+        /// <param name="NroCuenta"></param>
+        /// <returns>Retorna ok(200) si compro bien o Error(500) si ocurrio un error</returns>
+        [HttpPut("CompraBTCByUUID/{UUID}")]
+        public async Task<IActionResult> Compraa([FromRoute] long UUID, decimal monto, int NroCuenta)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            var result = await _unitOfWork.CuentaCriptoRepository.CompraBTC(UUID, dolarCotiz, monto, NroCuenta);
+            if (!result)
+            {
+                return StatusCode(500, "Ocurrió un error interno en el servidor.");
+            }
+            else
+            {
+                await _unitOfWork.Complete();
+                return Ok("Compra exitosa!");
+            };
+        }
+
+        /// <summary>
+        /// Tranfiere BTC de la cuenta origen a la cuenta destino
+        /// </summary>
+        /// <param name="OringenUUID"></param>
+        /// <param name="DestinoUUID"></param>
+        /// <param name="monto"></param>
+        /// <returns>retorna ok(200) si fue exitosa error(500) si hubo un error</returns>
+        [HttpPut("TransferenciaBTC")]
+        public async Task<IActionResult> TransferenciaBTC(long OringenUUID, long DestinoUUID, decimal monto)
+        {
+            decimal dolarCotiz = await _dolarCotizacion.ValorDolar();
+            var result = await _unitOfWork.CuentaCriptoRepository.TransferenciaBTC(OringenUUID, DestinoUUID, monto);
+            if (!result)
+            {
+                return StatusCode(500, "Ocurrió un error interno en el servidor.");
+            }
+            else
+            {
+                await _unitOfWork.Complete();
+                return Ok("Transferencia exitosa!");
+            };
+        }
     }
 }
