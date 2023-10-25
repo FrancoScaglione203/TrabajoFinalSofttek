@@ -18,13 +18,22 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             
         }
 
-
+        /// <summary>
+        /// Funcion que devuelve la CuentaCripto con el UUID ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <returns>Retorna una CuentaCripto</returns>
         public async Task<CuentaCripto> GetByUUID(long UUID)
         {
             var cuentaCripto = await _context.CuentasCriptos.SingleOrDefaultAsync(u => u.UUID == UUID);
             return cuentaCripto;
         }
 
+        /// <summary>
+        /// Devuelve el saldo de BTC del UUID que se ingresa
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <returns>retorna un decimal</returns>
         public async Task<decimal> GetSaldoByUUID(long UUID)
         {
 
@@ -37,6 +46,11 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return saldo;
         }
 
+        /// <summary>
+        /// Devuelve todas las CuentasCripto que corresponden al cuil ingresado
+        /// </summary>
+        /// <param name="cuil"></param>
+        /// <returns>Retorna lista de CuentaCripto</returns>
         public async Task<List<CuentaCripto>> GetAllByCuil(long cuil)
         {
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
@@ -44,10 +58,14 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return cuentasCripto;
         }
 
-
+        /// <summary>
+        /// Deposita BTC en la cuenta con el UUID ingresado
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> DepositoByUUID(long UUID, decimal monto)
         {
-
             var cuentaCripto = await GetByUUID(UUID);
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Id == cuentaCripto.UsuarioId);
             if (cuentaCripto == null || monto <= 0) { return false; }
@@ -62,7 +80,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
 
         }
 
-
+        /// <summary>
+        /// Extrae el monto ingresado de la cuenta UUID que ingresamos
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> ExtraccionByUUID(long UUID, decimal monto)
         {
             var cuentaCripto = await GetByUUID(UUID);
@@ -82,6 +105,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
+        /// <summary>
+        /// Devuelve la cantidad de BTC que se pueden comprar con los pesos que tiene en la CuentaFiduciaria el Usuario
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <returns></returns>
         public async Task<decimal> ConsultaCompraBTC(long UUID, decimal dolarCotiz)
         {
             var cuentaCripto = await GetByUUID(UUID);
@@ -93,6 +122,14 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         }
 
 
+        /// <summary>
+        /// Compra la cantidad de BTC indicados
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <param name="monto"></param>
+        /// <param name="NroCuenta"></param>
+        /// <returns></returns>
         public async Task<bool> CompraBTC(long UUID, decimal dolarCotiz, decimal monto, int NroCuenta)
         {
             var cuentaFiduciaria = await _context.CuentasFiduciarias.SingleOrDefaultAsync(u => u.NumeroCuenta == NroCuenta);
@@ -114,6 +151,13 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+
+        /// <summary>
+        /// Retorna la cantidad de pesos que equivale los BTC
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <returns></returns>
         public async Task<decimal> ConsultaVentaBTC(long UUID, decimal dolarCotiz)
         {
             var cuentaCripto = await GetByUUID(UUID);
@@ -122,6 +166,15 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return consulta;                                                        //por medio de una API externa
         }
 
+
+        /// <summary>
+        /// Vende las BTC en pesos y las manda a la cuenta fiduciaria del usuario
+        /// </summary>
+        /// <param name="UUID"></param>
+        /// <param name="dolarCotiz"></param>
+        /// <param name="monto"></param>
+        /// <param name="NroCuentaDestino"></param>
+        /// <returns></returns>
         public async Task<bool> VentaBTC(long UUID, decimal dolarCotiz, decimal monto, int NroCuentaDestino)
         {
             var cuentaCripto = await GetByUUID(UUID);
@@ -145,6 +198,13 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
             return true;
         }
 
+        /// <summary>
+        /// Transafiere BTC de una CuentaCripto a otra
+        /// </summary>
+        /// <param name="OrigenUUID"></param>
+        /// <param name="DestinoUUID"></param>
+        /// <param name="monto"></param>
+        /// <returns></returns>
         public async Task<bool> TransferenciaBTC(long OrigenUUID, long DestinoUUID, decimal monto)
         {
             var cuentaOrigen = await GetByUUID(OrigenUUID);

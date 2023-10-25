@@ -9,6 +9,12 @@ namespace TrabajoFinalSofttek.DataAccess.Repositories
         public HistorialRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        /// <summary>
+        /// Devuelve lista de historiales correspondientes al cuil ingresado
+        /// </summary>
+        /// <param name="cuil"></param>
+        /// <returns></returns>
         public async Task<List<Historial>> GetAllByCuil(long cuil)
         {
             var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Cuil == cuil);
