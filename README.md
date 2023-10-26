@@ -4,7 +4,7 @@ Proyecto desarrollado en .NET CORE 6, consiste en una billetera virtual donde se
 ---
 ---
 ## **Funcionalidad**
-Para utilizar la API es necesario crearse un usuario con un numero de CUIL que no se puede repetir entre usuarios. Una vez creado, este podrá crear una cuenta fiduciaria y una cuenta cripto. 
+Para utilizar la API es necesario iniciar sesion ya que cuenta con autenticacion, de ser necesario crearse un usuario con un numero de CUIL que no se puede repetir entre usuarios. Una vez creado, este podrá crear una cuenta fiduciaria y una cuenta cripto. 
 
 El usuario puede consultar últimos movimientos, consultar saldo, depositar, extraer y transferir entre mismo tipo de cuentas. En la cuenta fiduciaria se puede vender dólares para obtener pesos. En la cuenta cripto, la venta de BTC se pasa a pesos que serán depositados en la cuenta fiduciaria del usuario y la compra solo se puede realizar a partir del saldo pesos de la cuenta fiduciaria, es decir que no se pueden comprar BTC con los dólares, en caso de querer usar los dólares los tiene que vender para que se transformen en pesos y ahí comprar BTC.
 
@@ -95,6 +95,14 @@ HistorialController: Tiene un EndPoint para agregar un Historial y otro para mos
 ---
 ---
 
+
+## **FrontEnd**
+El frontend se realizo con razor: https://github.com/FrancoScaglione203/TrabajoFinalSofttekFront/tree/master
+
+Por el momento esta incompleto
+
+---
+---
 ## **Mejoras Versiones Futuras**
 Debido a la falta de tiempo tuve que optar por no agregar algunas funciones que podrían agregarse en futuras versiones:
 -	Cotizacion BTC: la idea es utilizar una API externa para obtener la cotizacion en dólares de BTC
