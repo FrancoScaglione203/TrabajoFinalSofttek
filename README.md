@@ -108,6 +108,7 @@ Debido a la falta de tiempo tuve que optar por no agregar algunas funciones que 
 -	Cotizacion BTC: la idea es utilizar una API externa para obtener la cotizacion en dólares de BTC
 -	Seguridad: para mayor seguridad se agregaría un encriptado a la clave.
 -	Numero de cuenta Fiduciaria y UUID de cuenta cripto: lo ideal es que se genere un numero random cuando se crea un elemento nuevo y asignarselos a estas propiedades.
+-	Editar y Eliminar: se deberia agregar EndPoints donde se pueda editar y eliminar fisica o logicamente los Usuarios y Cuentas
 
 
 ---
